@@ -8,6 +8,16 @@ const rangeValue = document.getElementById('rangeValue');
 const resultImage = document.getElementById('resultImage');
 const uploadLabel = document.querySelector('.upload-label');
 
+document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.getElementById('confidenceRange');
+    const defaultValue = 95;
+
+    slider.value = defaultValue; 
+    document.getElementById('rangeValue').textContent = defaultValue;
+
+    console.log("Порог уверенности сброшен до:", slider.value);
+});
+
 imageInput.addEventListener('change', function() {
     const file = this.files[0];
     
@@ -54,27 +64,42 @@ async function uploadImage() {
     formData.append('conf', confidenceFloat);
 
     try {
+        // Ключевое изменение: responseType больше не 'blob'
+        // Axios по умолчанию обработает ответ как JSON, если ответ имеет Content-Type: application/json
         const response = await axios.post('http://127.0.0.1:8000/predict', formData, {
-            responseType: 'blob',
+            // responseType: 'blob', // <-- Эту строку удаляем или комментируем
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
 
-        const imageUrl = URL.createObjectURL(response.data);
+        // Получаем JSON-данные
+        const data = response.data; 
+
+        // 1. Отображение изображения (Декодирование Base64)
+        // Формируем URL из Base64 строки
+        const imageUrl = `data:${data.media_type};base64,${data.image_base64}`;
         
         const resultImgTag = document.getElementById('result-image-display');
         resultImgTag.src = imageUrl;
         resultImgTag.style.display = 'block';
         
+        // 2. Отображение текстовых результатов
         revealElement(resultBox);
         
-        document.getElementById('diagnosis').textContent = "Детекция выполнена успешно";
-        document.getElementById('confidence').textContent = rangeInput.value + "% (Порог)";
+        // Отображение Диагноза (найденная болезнь или "Здоровое растение")
+        document.getElementById('diagnosis').textContent = data.detected_problem; 
+        
+        // Отображение Уверенности (пока оставим только Порог, т.к. YOLO может вернуть несколько рамок)
+        document.getElementById('confidence').textContent = rangeInput.value + "% (Порог)"; 
+        
+        // !!! НОВОЕ: Отображение Рекомендаций !!!
+        document.getElementById('recommendations-text').textContent = data.recommendations;
+        // Мы предполагаем, что вы добавите элемент с id="recommendations-text" в index.html
 
     } catch (error) {
-        console.error(error);
-        alert("Ошибка при обработке: " + (error.response?.statusText || "Сервер недоступен"));
+        console.error(error.response?.data || error);
+        alert("Ошибка при обработке: " + (error.response?.data?.detail || "Сервер недоступен"));
     } finally {
         predictButton.textContent = "Получить Диагноз";
         predictButton.disabled = false;
