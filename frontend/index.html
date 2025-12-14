@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeafScan: Диагностика Болезней Растений</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="scripts/script.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>LeafScan</h1>
+        <p class="subtitle">AI-диагностика болезней по фотографии</p>
+        
+        <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+            <span class="upload-label">
+                Нажмите, чтобы выбрать файл...
+            </span>
+            <input type="file" id="imageInput" accept="image/*">
+            <img id="image-preview" src="" alt="Предпросмотр загруженного листа">
+        </div>
+
+        <div class="setting-box hide">
+            <label for="confidenceRange">
+                Минимальная Уверенность для Диагноза: 
+                <span id="rangeValue">95%</span>
+            </label>
+            <input type="range" id="confidenceRange" min="50" max="100" value="95" step="1">
+        </div>
+        
+        <button class="hide" id="predictButton" onclick="uploadImage()" disabled>
+            Получить Диагноз
+        </button>
+        
+        <div class="result-box hide">
+            <p><strong>Диагноз:</strong> <span id="diagnosis">Ожидание файла.</span></p>
+            <p><strong>Уверенность:</strong> <span id="confidence">N/A</span></p>
+        </div>
+    </div>
