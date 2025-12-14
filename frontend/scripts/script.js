@@ -81,9 +81,7 @@ async function uploadImage() {
         revealElement(resultBox);
         
         document.getElementById('diagnosis').textContent = data.detected_problem; 
-        
         document.getElementById('confidence').textContent = rangeInput.value + "% (Порог)"; 
-        
         document.getElementById('recommendations-text').textContent = data.recommendations;
 
     } catch (error) {

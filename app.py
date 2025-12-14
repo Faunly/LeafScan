@@ -8,8 +8,9 @@ from PIL import Image
 from ultralytics import YOLO
 
 from classes_rus import CLASS_MAPPING
+from giga_api import get_recommendations
 
-MODEL_PATH = r"best.pt"
+MODEL_PATH = r"models/best.pt"
 
 app = FastAPI()
 
@@ -74,7 +75,7 @@ async def predict_plant_disease(
             disease_name_rus = CLASS_MAPPING.get(best_disease_label_en, best_disease_label_en)
             
             try:
-                recommendations = 'gigachat отключен'
+                recommendations = get_recommendations(disease_name_rus)
 
 
             except Exception as llm_e:
