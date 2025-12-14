@@ -8,6 +8,8 @@ const rangeValue = document.getElementById('rangeValue');
 const resultImage = document.getElementById('resultImage');
 const uploadLabel = document.querySelector('.upload-label');
 
+const recommendationsText = document.getElementById('recommendations-text');
+
 document.addEventListener('DOMContentLoaded', function() {
     const slider = document.getElementById('confidenceRange');
     const defaultValue = 95;
@@ -51,6 +53,29 @@ function revealElement(element) {
     }
 }
 
+function hideCursor() {
+    recommendationsText.classList.add('typing-deactivate')
+}
+
+function typeWriter(text) {
+    let i = 0;
+    const speed = 20;
+    
+    recommendationsText.textContent = '';
+
+    function type() {
+        if (i < text.length) {
+            recommendationsText.textContent += text.charAt(i); 
+            i++;
+            setTimeout(type, speed); 
+        } else {
+            hideCursor();
+        }
+    }
+
+    type();
+}
+
 async function uploadImage() {
     const file = imageInput.files[0];
     if (!file) return;
@@ -83,6 +108,13 @@ async function uploadImage() {
         document.getElementById('diagnosis').textContent = data.detected_problem; 
         document.getElementById('confidence').textContent = rangeInput.value + "% (Порог)"; 
         document.getElementById('recommendations-text').textContent = data.recommendations;
+
+        typeWriter(data.recommendations);
+
+        resultBox.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'end'
+        });
 
     } catch (error) {
         console.error(error.response?.data || error);

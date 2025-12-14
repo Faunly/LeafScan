@@ -171,3 +171,23 @@ button:disabled {
     border: 2px solid var(--primary-color);
     display: none;
 }
+
+
+#recommendations-text {
+    white-space: pre-wrap;
+    overflow: hidden;
+    border-right: 0.15em solid var(--secondary-color);
+    font-family: monospace;
+    padding-right: 2px;
+    display: inline-block;
+    text-align: justify;
+}
+
+@keyframes blink {
+    from, to { border-color: transparent }
+    50% { border-color: var(--secondary-color); }
+}
+
+#recommendations-text.typing-deactivate {
+    border-right: unset;
+}
