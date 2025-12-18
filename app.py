@@ -70,16 +70,16 @@ async def predict_plant_disease(
                 if label_en not in HEALTHY_CLASSES and confidence > best_disease_conf:
                     best_disease_conf = confidence
                     best_disease_label_en = label_en
+
+        disease_name_rus = "Неизвестно"
         
         if best_disease_label_en:
             disease_name_rus = CLASS_MAPPING.get(best_disease_label_en, best_disease_label_en)
             
             try:
                 recommendations = get_recommendations(disease_name_rus)
-
-
-            except Exception as llm_e:
-                recommendations = f"Обнаружена проблема: {disease_name_rus}. Не удалось получить рекомендации от LLM: {llm_e}"
+            except Exception:
+                recommendations = f"Обнаружена проблема: {disease_name_rus}. Рекомендации недоступны."
 
         res_plotted = result.plot()
         res_plotted_rgb = res_plotted[..., ::-1]

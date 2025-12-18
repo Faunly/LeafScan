@@ -8,6 +8,11 @@ const rangeValue = document.getElementById('rangeValue');
 const resultImage = document.getElementById('resultImage');
 const uploadLabel = document.querySelector('.upload-label');
 
+const adressDeploy = "http://31.132.164.240:8001"
+const adressLocal = "127.0.0.1:8000"
+
+
+
 const recommendationsText = document.getElementById('recommendations-text');
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -89,7 +94,7 @@ async function uploadImage() {
     formData.append('conf', confidenceFloat);
 
     try {
-        const response = await axios.post('http://127.0.0.1:8000/predict', formData, {
+        const response = await axios.post(`http://127.0.0.1:8000/predict`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

@@ -7,28 +7,26 @@ load_dotenv()
 auth_key = getenv("GIGACHAT_AUTH_KEY")
 
 if not auth_key:
-    raise ValueError("GIGACHAT_AUTH_KEY не найден. Проверьте ваш файл .env.")
+    print("ВНИМАНИЕ: GIGACHAT_AUTH_KEY не найден. Рекомендации будут отключены.")
 
 giga = None
 
-try:
-    giga = GigaChat(
-        credentials=auth_key,
-        ca_bundle_file='certs/rus.crt', 
-        model="GigaChat"
-    )
-    print("GigaChat Client успешно инициализирован.")
-except FileNotFoundError:
-    print("Ошибка: Файл сертификата 'certs/rus.crt' не найден! Убедитесь в его наличии.")
-    raise
-except Exception as e:
-    print(f"Ошибка инициализации GigaChat. Проверьте AUTH_KEY: {e}")
-    raise
+if auth_key:
+    try:
+        giga = GigaChat(
+            credentials=auth_key,
+            ca_bundle_file='certs/rus.crt', 
+            model="GigaChat"
+        )
+        print("GigaChat Client успешно инициализирован.")
+    except Exception as e:
+        print(f"Ошибка инициализации GigaChat: {e}")
+        giga = None
 
 
 def get_recommendations(disease_name):
     if giga is None:
-        return "Ошибка: GigaChat клиент не инициализирован. Проверьте ошибки при запуске."
+        return "Рекомендации временно недоступны (проблема с API ключом или сертификатом)."
 
     SYSTEM_INSTRUCTION_TEXT = (
         "Ты — высококвалифицированный, этичный агроном и фитопатолог, специализирующийся на органическом и безопасном садоводстве. "
@@ -50,4 +48,4 @@ def get_recommendations(disease_name):
         return response.choices[0].message.content
         
     except Exception as e:
-        return f"Ошибка при работе с GigaChat (giga.chat()): {e}"
+        return f"Не удалось загрузить рекомендации: {e}"
